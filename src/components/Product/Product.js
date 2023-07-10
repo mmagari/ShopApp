@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import styles from './Product.module.scss';
 import Button from '../Button/Button';
@@ -9,15 +9,15 @@ const Product = ({ title, basePrice, sizes, colors }) => {
   const [currentColor, setCurrentColor] = useState(colors[0]);
   const [currentSize, setCurrentSize] = useState(sizes[0].name);
 
-  const getPrice = () => {
+  const getPrice = useMemo(() => {
     const selectedSize = sizes.find((size) => size.name === currentSize);
     if (selectedSize) {
+      console.log('Liczymy cenę');
       return basePrice + selectedSize.additionalPrice;
     }
+    console.log('Liczymy cenę');
     return basePrice;
-  };
-
-  const price = getPrice();
+  }, [basePrice, currentSize, sizes]);
 
   const handleSelectSize = (size) => {
     setCurrentSize(size);
@@ -31,7 +31,7 @@ const Product = ({ title, basePrice, sizes, colors }) => {
     event.preventDefault();
     console.log('Product Summary:');
     console.log('Name:', title);
-    console.log('Price:', price);
+    console.log('Price:', getPrice);
     console.log('Selected Options:');
     console.log('Color:', currentColor);
     console.log('Size:', currentSize);
@@ -43,7 +43,7 @@ const Product = ({ title, basePrice, sizes, colors }) => {
       <div>
         <header>
           <h2 className={styles.name}>{title}</h2>
-          <span className={styles.price}>Price: {price}$</span>
+          <span className={styles.price}>Price: {getPrice}$</span>
         </header>
         <ProductOptions
           sizes={sizes}
